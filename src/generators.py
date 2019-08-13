@@ -13,13 +13,14 @@ class Output:
         return self.variables.get(variable_name)
 
     def parse_request(self, txt):
+        kw = dict()
         if txt[0] != '%':
             # Must be a named variable
             var_name = txt.split(':')[0]
             txt = ':'.join(txt.split(':')[1:])
+            kw['var_name'] = var_name
             print(var_name, txt)
-        kw = dict()
-        types = {'d': 'integer', 'f': 'float', 'c':'character', 's': 'string', 'c': 'compund'}
+        types = {'d': 'integer', 'f': 'float', 'c':'character', 's': 'string', '(': 'compund'}
         
         kw['type'] = types[txt[1]]
         tmp = []
@@ -81,3 +82,5 @@ def generate_string(txt, **kwargs):
 def generate_numbers(txt, **kwargs):
     pass
 
+if __name__ == '__main__':
+    pass
