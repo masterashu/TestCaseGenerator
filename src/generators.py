@@ -1,8 +1,11 @@
-class Output:
+from random import randint, random, randrange
+from sys import maxsize
+
+class Generator:
     def __init__(self):
         self.variables = dict()
-        self.output = []
-    
+        self.output = []    
+
     def parse_val(self, value, d_type=int):
         if d_type == int:
             return self.parse_int(value)
@@ -19,7 +22,7 @@ class Output:
                 return float(pow(10, int(value[1:])))
             else:
                 return float(value)
-    
+
     def parse_str(self, value):
         pass
 
@@ -49,8 +52,9 @@ class Output:
             txt = ':'.join(txt.split(':')[1:])
             kw['var_name'] = var_name
             print(var_name, txt)
-        types = {'d': 'integer', 'f': 'float', 'c':'string', 's': 'string', '(': 'compund'}
-        
+        types = {'d': 'integer', 'f': 'float',
+                 'c': 'string', 's': 'string', '(': 'compund'}
+
         kw['type'] = types[txt[1]]
         tmp = []
 
@@ -67,7 +71,7 @@ class Output:
                         kw['range'] = True
                         kw['range_end'] = self.parse_val(tmp[1:], int)
                     elif (tmp[-1] == ':'):
-                    # No Upper Limit
+                        # No Upper Limit
                         kw['range'] = True
                         kw['range_start'] = self.parse_val(tmp[:-1], int)
                     else:
@@ -76,7 +80,7 @@ class Output:
                         kw['range_start'] = self.parse_val(tmp[0], int)
                         kw['range_end'] = self.parse_val(tmp[1], int)
                     tmp = []
-                
+
                 elif ch == '}' and kw.get('repeat', False) == False:
                     tmp = ''.join(tmp)
                     kw['repeat'] = True
@@ -84,8 +88,8 @@ class Output:
 
                 else:
                     tmp.append(ch)
-        
-        elif kw['type'] ==  'float':
+
+        elif kw['type'] == 'float':
             for ch in txt[2:]:
                 if ch == '[' and kw.get('range', False) == False:
                     pass
@@ -107,7 +111,7 @@ class Output:
                         kw['range_start'] = self.parse_val(tmp[0], int)
                         kw['range_end'] = self.parse_val(tmp[1], int)
                     tmp = []
-                
+
                 elif ch == '}' and kw.get('repeat', False) == False:
                     tmp = ''.join(tmp)
                     kw['repeat'] = True
@@ -115,8 +119,8 @@ class Output:
 
                 else:
                     tmp.append(ch)
-        
-        elif kw['type'] ==  'string':
+
+        elif kw['type'] == 'string':
             choices = set()
             escape = False
             for ch in txt[2:]:
@@ -150,13 +154,14 @@ class Output:
                                 if char == '':
                                     char = chs
                                 else:
-                                    active_range = True                                    
+                                    active_range = True
                             else:
                                 if char == '':
                                     char = chs
                                 else:
                                     if active_range:
-                                        choices = choices.union(self.get_char_in_range(char, chs))
+                                        choices = choices.union(
+                                            self.get_char_in_range(char, chs))
                                         char = ''
                                         active_range = False
                                     else:
@@ -177,35 +182,73 @@ class Output:
                         kw['repeat_count'] = self.parse_val(tmp, int)
 
                 else:
-                    tmp.append(ch)                    
+                    tmp.append(ch)
         return kw
 
+    def generate(self, **kwargs):
+        if kwargs['type'] == 'integer':
+            return self.generate_number(**kwargs)
+        elif kwargs['type'] == 'float':
+            return self.generate_float(**kwargs)
+        elif kwargs['type'] == 'string':
+            return self.generate_string(**kwargs)
 
+    def generate_number(self, **kwargs):
+        if kwargs.get('repeat', False):
+            return self.generate_numbers(**kwargs)
+        
+        if kwargs.get('range', False):
+            if kwargs.get('range_start', False):
+                if kwargs.get('range_end', False):
+                    return randint(kwargs['range_start'], kwargs['range_end'])
+                else:
+                    return randint(kwargs['range_start'], int(maxsize * random()))
+            else:
+                if kwargs.get('range_end', False):
+                    return randint(int(maxsize * random()), kwargs['range_end'])
+                else:
+                    raise ValueError
+            
+        else:
+            return int(maxsize * random())
 
-def generate(txt, **kwargs):
-    pass
+    def generate_character(self, **kwargs):
+        pass
 
-def generate_number(txt, **kwargs):
-    
-    pass
+    def generate_float(self, **kwargs):
+        pass
 
-def generate_character(txt, **kwargs):
-    pass
+    def generate_string(self, **kwargs):
+        pass
 
+    def generate_numbers(self, **kwargs):
+        repeat = kwargs.get('repeat_count', 1)
+        arr = []
+        if kwargs.get('range', False):
+            if kwargs.get('range_start', False):
+                if kwargs.get('range_end', False):
+                    for i in range(repeat):
+                        arr.append(randint(kwargs['range_start'], kwargs['range_end']))
+                else:
+                    for i in range(repeat):
+                        arr.append(randint(kwargs['range_start'], int(maxsize * random())))
+            else:
+                if kwargs.get('range_end', False):
+                    for i in range(repeat):
+                        arr.append(randint(int(maxsize * random()), kwargs['range_end']))
+                else:
+                    raise ValueError
+        else:
+            for i in range(repeat):
+                arr.append(int(maxsize * random()))
+        return arr
 
-def generate_float(txt, **kwargs):
-    pass
-
-
-def generate_string(txt, **kwargs):
-    pass
-
-    
-def generate_numbers(txt, **kwargs):
-    pass
 
 if __name__ == '__main__':
     a = Output()
+    print(a.parse_request('%d[:242]'))
+    print(a.parse_request('%d[3:]{2}'))
+    print(a.parse_request('%d[1:34]{4}'))
     print(a.parse_request('%s[a-g]'))
     print(a.parse_request('%s[qa-g]'))
     print(a.parse_request('%s[qwtgfa-e]'))
