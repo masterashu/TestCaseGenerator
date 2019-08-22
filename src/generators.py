@@ -198,13 +198,13 @@ class Generator:
             return self.generate_numbers(**kwargs)
         
         if kwargs.get('range', False):
-            if kwargs.get('range_start', False):
-                if kwargs.get('range_end', False):
+            if kwargs.get('range_start', False) is not False:
+                if kwargs.get('range_end', False) is not False:
                     return randint(kwargs['range_start'], kwargs['range_end'])
                 else:
-                    return randint(kwargs['range_start'], int(maxsize * random()))
+                    return randint(kwargs['range_start'], maxsize)
             else:
-                if kwargs.get('range_end', False):
+                if kwargs.get('range_end', False) is not False:
                     return randint(int(maxsize * random()), kwargs['range_end'])
                 else:
                     raise ValueError
@@ -225,17 +225,17 @@ class Generator:
         repeat = kwargs.get('repeat_count', 1)
         arr = []
         if kwargs.get('range', False):
-            if kwargs.get('range_start', False):
-                if kwargs.get('range_end', False):
+            if kwargs.get('range_start', False) is not False:
+                if kwargs.get('range_end', False) is not False:
                     for i in range(repeat):
                         arr.append(randint(kwargs['range_start'], kwargs['range_end']))
                 else:
                     for i in range(repeat):
-                        arr.append(randint(kwargs['range_start'], int(maxsize * random())))
+                        arr.append(randint(kwargs['range_start'], maxsize))
             else:
-                if kwargs.get('range_end', False):
+                if kwargs.get('range_end', False) is not False:
                     for i in range(repeat):
-                        arr.append(randint(int(maxsize * random()), kwargs['range_end']))
+                        arr.append(randint(maxsize * -1, kwargs['range_end']))
                 else:
                     raise ValueError
         else:
@@ -245,7 +245,7 @@ class Generator:
 
 
 if __name__ == '__main__':
-    a = Output()
+    a = Generator()
     print(a.parse_request('%d[:242]'))
     print(a.parse_request('%d[3:]{2}'))
     print(a.parse_request('%d[1:34]{4}'))
