@@ -17,7 +17,8 @@ def split(txt):
                 tmp.append(ch)
             elif len(tmp) > 0:
                 if tmp[-1] != ':':
-                    dx.append(''.join(tmp))
+                    if len(tmp) > 0:
+                        dx.append(''.join(tmp))
                     tmp = [ch]
                 else:
                     tmp.append(ch)
@@ -30,7 +31,8 @@ def split(txt):
             if compound > 0:
                 tmp.append(ch)
             else:
-                dx.append(''.join(tmp))
+                if len(tmp) > 0:
+                    dx.append(''.join(tmp))
                 dx.append(ch)
                 tmp = []
         
@@ -66,7 +68,8 @@ def split(txt):
             if compound > 0 or in_expression:
                 tmp.append(ch)
             else:
-                dx.append(''.join(tmp))
+                if len(tmp) > 0:
+                    dx.append(''.join(tmp))
                 tmp = [ch]              
     
         elif ch == ' ':
@@ -79,19 +82,20 @@ def split(txt):
 
 
 if __name__ == '__main__':
-    print(split('%d %d %d %d;%d'))
-    print(split('%d[:50]'))
-    print(split('%d[-30:]{4}'))
-    print(split('a:%d;%d[-30:]{$a}'))
-    print(split('%d[2:7]'))
-    print(split('%d{2}'))
-    print(split('%(%d[0:5] %d[5:10]);%d'))
-    print(split('a:%d %d $a %d;%d'))
-    print(split('a:%d[:50]'))
-    print(split('%d[-30:]{4}'))
-    print(split('v:%d[2:7]'))
-    print(split('n:%d{2}'))
-    print(split('%(%d[0:5] %d[5:10]);%d'))
+    # print(split('%d %d %d %d;%d'))
+    # print(split('%d[:50]'))
+    # print(split('%d[-30:]{4}'))
+    # print(split('a:%d;%d[-30:]{$a}'))
+    # print(split('%d[2:7]'))
+    # print(split('%d{2}'))
+    # print(split('%(%d[0:5] %d[5:10]);%d'))
+    # print(split('a:%d %d $a %d;%d'))
+    # print(split('a:%d[:50]'))
+    # print(split('%d[-30:]{4}'))
+    # print(split('v:%d[2:7]'))
+    # print(split('n:%d{2}'))
+    # print(split('%(%d[0:5] %d[5:10]);%d'))
+    print(split('a:%d;$a;$a'))
     
 
 

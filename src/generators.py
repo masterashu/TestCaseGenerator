@@ -47,11 +47,18 @@ class Generator:
     def parse_request(self, txt):
         kw = dict()
         if txt[0] != '%':
-            # Must be a named variable
+            # Must be a Named variable or a previous variable
+            
+            if txt[0] == '$':
+                # Callback to previous Variable
+                kw['type'] = 'variable'
+                kw['variable_name'] = txt[1:].strip()
+                return kw
+            # New Named Variable
             var_name = txt.split(':')[0]
             txt = ':'.join(txt.split(':')[1:])
             kw['var_name'] = var_name
-            print(var_name, txt)
+            # print(var_name, txt)
         types = {'d': 'integer', 'f': 'float',
                  'c': 'string', 's': 'string', '(': 'compund'}
 
@@ -192,6 +199,8 @@ class Generator:
             return self.generate_float(**kwargs)
         elif kwargs['type'] == 'string':
             return self.generate_string(**kwargs)
+        elif kwargs['type'] == 'variable':
+            return self.get_variable(kwargs['variable_name'])
 
     def generate_number(self, **kwargs):
         if kwargs.get('repeat', False):
