@@ -19,6 +19,12 @@
   `%(%d{3}){10}`
   * Generate a Random Integer **n** and a matrix of size **n** x **n** in **n** space seperated numbers in **n** lines  
   `n:%d;%(%d{$n}){$n}`
+  * Generate a Random Character(alphanumeric)  
+  `%s`
+  * Generate 10 Random Characters  
+  `%s{10}`
+  * Generate 10 Random Characters(space separated)  
+  `%c{10}`
 
 
 

@@ -1,10 +1,12 @@
-from random import randint, random, randrange
+from random import randint, random
 from sys import maxsize
+
 
 class Generator:
     def __init__(self):
+        self.valid_chars = set('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
         self.variables = dict()
-        self.output = []    
+        self.output = []
 
     def parse_val(self, value, d_type=int):
         if d_type == int:
@@ -26,7 +28,8 @@ class Generator:
     def parse_str(self, value):
         pass
 
-    def get_char_in_range(self, start, end):
+    @staticmethod
+    def get_char_in_range(start, end):
         chars = set()
         for i in range(ord(start), ord(end) + 1, 1):
             chars.add(chr(i))
@@ -48,7 +51,7 @@ class Generator:
         kw = dict()
         if txt[0] != '%':
             # Must be a Named variable or a previous variable
-            
+
             if txt[0] == '$':
                 # Callback to previous Variable
                 kw['type'] = 'variable'
@@ -60,24 +63,24 @@ class Generator:
             kw['var_name'] = var_name
             # print(var_name, txt)
         types = {'d': 'integer', 'f': 'float',
-                 'c': 'string', 's': 'string', '(': 'compund'}
+                 'c': 'character', 's': 'string', '(': 'compound'}
 
         kw['type'] = types[txt[1]]
         tmp = []
 
         if kw['type'] == 'integer':
             for ch in txt[2:]:
-                if ch == '[' and kw.get('range', False) == False:
+                if ch == '[' and kw.get('range', False) is False:
                     pass
-                elif ch == '{' and kw.get('repeat', False) == False:
+                elif ch == '{' and kw.get('repeat', False) is False:
                     pass
-                elif ch == ']' and kw.get('range', False) == False:
+                elif ch == ']' and kw.get('range', False) is False:
                     tmp = ''.join(tmp)
                     # No lower Limit
-                    if (tmp[0] == ':'):
+                    if tmp[0] == ':':
                         kw['range'] = True
                         kw['range_end'] = self.parse_val(tmp[1:], int)
-                    elif (tmp[-1] == ':'):
+                    elif tmp[-1] == ':':
                         # No Upper Limit
                         kw['range'] = True
                         kw['range_start'] = self.parse_val(tmp[:-1], int)
@@ -88,7 +91,7 @@ class Generator:
                         kw['range_end'] = self.parse_val(tmp[1], int)
                     tmp = []
 
-                elif ch == '}' and kw.get('repeat', False) == False:
+                elif ch == '}' and kw.get('repeat', False) is False:
                     tmp = ''.join(tmp)
                     kw['repeat'] = True
                     kw['repeat_count'] = self.parse_val(tmp, int)
@@ -98,18 +101,18 @@ class Generator:
 
         elif kw['type'] == 'float':
             for ch in txt[2:]:
-                if ch == '[' and kw.get('range', False) == False:
+                if ch == '[' and kw.get('range', False) is False:
                     pass
-                elif ch == '{' and kw.get('repeat', False) == False:
+                elif ch == '{' and kw.get('repeat', False) is False:
                     pass
-                elif ch == ']' and kw.get('range', False) == False:
+                elif ch == ']' and kw.get('range', False) is False:
                     tmp = ''.join(tmp)
                     # No lower Limit
-                    if (tmp[0] == ':'):
+                    if tmp[0] == ':':
                         kw['range'] = True
                         kw['range_end'] = self.parse_val(tmp[1:], int)
                     # No Upper Limit
-                    elif (tmp[-1] == ':'):
+                    elif tmp[-1] == ':':
                         kw['range'] = True
                         kw['range_start'] = self.parse_val(tmp[:-1], int)
                     else:
@@ -119,7 +122,7 @@ class Generator:
                         kw['range_end'] = self.parse_val(tmp[1], int)
                     tmp = []
 
-                elif ch == '}' and kw.get('repeat', False) == False:
+                elif ch == '}' and kw.get('repeat', False) is False:
                     tmp = ''.join(tmp)
                     kw['repeat'] = True
                     kw['repeat_count'] = self.parse_val(tmp, int)
@@ -127,7 +130,7 @@ class Generator:
                 else:
                     tmp.append(ch)
 
-        elif kw['type'] == 'string':
+        elif kw['type'] == 'string' or kw['type'] == 'character':
             choices = set()
             escape = False
             for ch in txt[2:]:
@@ -137,15 +140,15 @@ class Generator:
                         escape = False
                     else:
                         escape = True
-                elif ch == '[' and kw.get('choice', False) == False:
+                elif ch == '[' and kw.get('choice', False) is False:
                     if escape:
                         tmp.append(ch)
                         escape = False
-                elif ch == '{' and kw.get('repeat', False) == False:
+                elif ch == '{' and kw.get('repeat', False) is False:
                     if escape:
                         tmp.append(ch)
                         escape = False
-                elif ch == ']' and kw.get('choice', False) == False:
+                elif ch == ']' and kw.get('choice', False) is False:
                     if escape:
                         tmp.append(ch)
                         escape = False
@@ -167,8 +170,7 @@ class Generator:
                                     char = chs
                                 else:
                                     if active_range:
-                                        choices = choices.union(
-                                            self.get_char_in_range(char, chs))
+                                        choices = choices.union(self.get_char_in_range(char, chs))
                                         char = ''
                                         active_range = False
                                     else:
@@ -179,17 +181,18 @@ class Generator:
                         kw['choices'] = choices
 
                         tmp = []
-                elif ch == '}' and kw.get('repeat', False) == False:
+                elif ch == '}' and kw.get('repeat', False) is False:
                     if escape:
                         tmp.append(ch)
                         escape = False
                     else:
                         tmp = ''.join(tmp)
-                        kw['repeat'] = True
-                        kw['repeat_count'] = self.parse_val(tmp, int)
+                        kw['length'] = self.parse_val(tmp, int)
 
                 else:
                     tmp.append(ch)
+        if kw.get('length', False) is False:
+            kw['length'] = 1
         return kw
 
     def generate(self, **kwargs):
@@ -199,13 +202,15 @@ class Generator:
             return self.generate_float(**kwargs)
         elif kwargs['type'] == 'string':
             return self.generate_string(**kwargs)
+        elif kwargs['type'] == 'character':
+            return self.generate_string(**kwargs)
         elif kwargs['type'] == 'variable':
             return self.get_variable(kwargs['variable_name'])
 
     def generate_number(self, **kwargs):
         if kwargs.get('repeat', False):
             return self.generate_numbers(**kwargs)
-        
+
         if kwargs.get('range', False):
             if kwargs.get('range_start', False) is not False:
                 if kwargs.get('range_end', False) is not False:
@@ -217,18 +222,26 @@ class Generator:
                     return randint(int(maxsize * random()), kwargs['range_end'])
                 else:
                     raise ValueError
-            
+
         else:
             return int(maxsize * random())
-
-    def generate_character(self, **kwargs):
-        pass
 
     def generate_float(self, **kwargs):
         pass
 
     def generate_string(self, **kwargs):
-        pass
+        if kwargs.get('choices', False) is False:
+            valid_chars = self.valid_chars
+        else:
+            if kwargs.get('choice_invert', False) is False:
+                valid_chars = set(kwargs['choices'])
+            else:
+                valid_chars = self.valid_chars - set(kwargs['choices'])
+        if kwargs['type'] == 'string':
+            output = ''.join([random.choice(valid_chars) for _ in range(kwargs['length'])])
+        else:
+            output = ' '.join([random.choice(valid_chars) for _ in range(kwargs['length'])])
+        return output
 
     def generate_numbers(self, **kwargs):
         repeat = kwargs.get('repeat_count', 1)
@@ -260,9 +273,11 @@ if __name__ == '__main__':
     print(a.parse_request('%d[1:34]{4}'))
     print(a.parse_request('%s[a-g]'))
     print(a.parse_request('%s[qa-g]'))
-    print(a.parse_request('%s[qwtgfa-e]'))
+    print(a.parse_request('%s[qmark-n]'))
     print(a.parse_request('%s[ABCDa-g]'))
-    print(a.parse_request('%s[9583a-g]'))
+    print(a.parse_request('%s[9583a-g]{2}'))
     print(a.parse_request('%s[-a-g]'))
     print(a.parse_request('%s[^9583a-g]'))
     print(a.parse_request('%s[^-a-g]'))
+    print(a.parse_request('%s{34}'))
+    print(a.parse_request('%s'))
