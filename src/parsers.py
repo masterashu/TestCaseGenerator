@@ -82,19 +82,19 @@ def split(txt):
 
 
 if __name__ == '__main__':
-    # print(split('%d %d %d %d;%d'))
-    # print(split('%d[:50]'))
-    # print(split('%d[-30:]{4}'))
-    # print(split('a:%d;%d[-30:]{$a}'))
-    # print(split('%d[2:7]'))
-    # print(split('%d{2}'))
-    # print(split('%(%d[0:5] %d[5:10]);%d'))
-    # print(split('a:%d %d $a %d;%d'))
-    # print(split('a:%d[:50]'))
-    # print(split('%d[-30:]{4}'))
-    # print(split('v:%d[2:7]'))
-    # print(split('n:%d{2}'))
-    # print(split('%(%d[0:5] %d[5:10]);%d'))
+    print(split('%d %d %d %d;%d'))
+    print(split('%d[:50]'))
+    print(split('%d[-30:]{4}'))
+    print(split('a:%d;%d[-30:]{$a}'))
+    print(split('%d[2:7]'))
+    print(split('%d{2}'))
+    print(split('%(%d[0:5] %d[5:10]);%d'))
+    print(split('a:%d %d $a %d;%d'))
+    print(split('a:%d[:50]'))
+    print(split('%d[-30:]{4}'))
+    print(split('v:%d[2:7]'))
+    print(split('n:%d{2}'))
+    print(split('%(%d[0:5] %d[5:10]);%d'))
     print(split('a:%d;$a;$a'))
     
 

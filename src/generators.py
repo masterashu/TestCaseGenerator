@@ -1,6 +1,6 @@
 from random import randint, random
 from sys import maxsize
-
+from parsers import split as split_request
 
 class Generator:
     def __init__(self):
@@ -50,7 +50,10 @@ class Generator:
     def parse_request(self, txt):
         kw = dict()
         if txt[0] != '%':
-            # Must be a Named variable or a previous variable
+            # Must be a Named variable or a previous variable or a newline
+            if txt[0] == ';':
+                kw['type'] = 'newline'
+                return kw
 
             if txt[0] == '$':
                 # Callback to previous Variable
@@ -62,11 +65,13 @@ class Generator:
             txt = ':'.join(txt.split(':')[1:])
             kw['var_name'] = var_name
             # print(var_name, txt)
+            
         types = {'d': 'integer', 'f': 'float',
                  'c': 'character', 's': 'string', '(': 'compound'}
 
         kw['type'] = types[txt[1]]
         tmp = []
+
 
         if kw['type'] == 'integer':
             for ch in txt[2:]:
@@ -191,8 +196,20 @@ class Generator:
 
                 else:
                     tmp.append(ch)
-        if kw.get('length', False) is False:
-            kw['length'] = 1
+                
+            if kw.get('length', False) is False:
+                kw['length'] = 1
+        
+        elif kw['type'] == 'compound':
+            kw['request'] = []
+            requests = split_request(txt[2:-1])[0]
+            if txt[-1] == '}':
+                    kw['repeat'] = True
+                    kw['repeat_count'] = int(txt.split('{')[-1][:-1])
+            for request in requests:
+                kw['request'].append(self.parse_request(request))
+        
+        
         return kw
 
     def generate(self, **kwargs):
@@ -281,3 +298,8 @@ if __name__ == '__main__':
     print(a.parse_request('%s[^-a-g]'))
     print(a.parse_request('%s{34}'))
     print(a.parse_request('%s'))
+    print(a.parse_request('%(%d%c)'))
+    print(a.parse_request('%(%d %c){4}'))
+    print(a.parse_request('%(%d;%c)'))
+    print(a.parse_request('%(%d %c %d[2:5]{3})'))
+
