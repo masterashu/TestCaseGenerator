@@ -204,7 +204,7 @@ class Generator:
             kw['request'] = []
             if txt[-1] == '}':
                 kw['repeat'] = True
-                kw['repeat_count'] = int(txt.split('{')[-1][:-1])
+                kw['repeat_count'] = self.parse_int(txt.split('{')[-1][:-1])
                 requests = split_request('{'.join(txt.split('{')[:-1]))[0]
             else:
                 requests = split_request(txt[2:-1])[0]
