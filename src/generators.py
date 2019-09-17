@@ -1,6 +1,6 @@
 from random import randint, random
 from sys import maxsize
-from parsers import split as split_request
+from .parsers import split as split_request
 
 class Generator:
     def __init__(self):
@@ -202,14 +202,15 @@ class Generator:
         
         elif kw['type'] == 'compound':
             kw['request'] = []
-            requests = split_request(txt[2:-1])[0]
             if txt[-1] == '}':
-                    kw['repeat'] = True
-                    kw['repeat_count'] = int(txt.split('{')[-1][:-1])
+                kw['repeat'] = True
+                kw['repeat_count'] = int(txt.split('{')[-1][:-1])
+                requests = split_request('{'.join(txt.split('{')[:-1]))[0]
+            else:
+                requests = split_request(txt[2:-1])[0]
             for request in requests:
                 kw['request'].append(self.parse_request(request))
-        
-        
+            
         return kw
 
     def generate(self, **kwargs):
@@ -223,6 +224,9 @@ class Generator:
             return self.generate_string(**kwargs)
         elif kwargs['type'] == 'variable':
             return self.get_variable(kwargs['variable_name'])
+        elif kwargs['type'] == 'compound':
+            return self.generate_compounds(**kwargs)
+
 
     def generate_number(self, **kwargs):
         if kwargs.get('repeat', False):
@@ -281,6 +285,16 @@ class Generator:
             for i in range(repeat):
                 arr.append(int(maxsize * random()))
         return arr
+
+    def generate_compounds(self, **kwargs):
+        repeat_count = kwargs.get('repeat_count', 1)
+        output = []
+        for _ in range(repeat_count):
+            gens = []
+            for reqs in kwargs['request']:
+                gens.append(self.generate(**reqs))
+            output.append(gens)
+        return output
 
 
 if __name__ == '__main__':

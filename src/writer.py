@@ -15,7 +15,9 @@ class Writer:
         elif type(data) is int:
             self.output_file.write(str(data))
         elif type(data) is list:
-            self.output_file.write(' '.join(map(str, data)))
+            # self.output_file.write(' '.join(map(str, data)))
+            for i in data:
+                self.write(i)
         self.output_file.write(' ')
     
     def close(self):
