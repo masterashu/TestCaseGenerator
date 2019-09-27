@@ -215,18 +215,24 @@ class Generator:
 
     def generate(self, **kwargs):
         if kwargs['type'] == 'integer':
-            return self.generate_number(**kwargs)
+            response = self.generate_number(**kwargs)
         elif kwargs['type'] == 'float':
-            return self.generate_float(**kwargs)
+            # TODO Maybe!
+            # response = self.generate_float(**kwargs)
+            return None
         elif kwargs['type'] == 'string':
-            return self.generate_string(**kwargs)
+            response = self.generate_string(**kwargs)
         elif kwargs['type'] == 'character':
-            return self.generate_string(**kwargs)
+            response = self.generate_string(**kwargs)
         elif kwargs['type'] == 'variable':
-            return self.get_variable(kwargs['variable_name'])
+            response = self.get_variable(kwargs['variable_name'])
         elif kwargs['type'] == 'compound':
-            return self.generate_compounds(**kwargs)
-
+            response = self.generate_compounds(**kwargs)
+        elif kwargs['type'] == 'newline':
+            response = '\n'
+        if kwargs.get('var_name', False) is not False:
+            self.variables[kwargs['var_name']] = response
+        return response
 
     def generate_number(self, **kwargs):
         if kwargs.get('repeat', False):
@@ -316,4 +322,6 @@ if __name__ == '__main__':
     print(a.parse_request('%(%d %c){4}'))
     print(a.parse_request('%(%d;%c)'))
     print(a.parse_request('%(%d %c %d[2:5]{3})'))
+    print(a.parse_request('%(%d %c %d[2:5]{3})'))
+
 
