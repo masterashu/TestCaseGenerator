@@ -36,8 +36,13 @@ class Generator:
         return chars
 
     def parse_int(self, value):
+        if type(value) is int:
+            return value
         if value[0] == '$':
-            return int(self.get_variable(value[1:]))
+            if self.get_variable(value[1:]) is not None:
+                return int(self.get_variable(value[1:]))
+            else:
+                return value
         else:
             if value[0] == '^':
                 return int(pow(10, int(value[1:])))
@@ -45,7 +50,7 @@ class Generator:
                 return int(value)
 
     def get_variable(self, variable_name):
-        return self.variables.get(variable_name)
+        return self.variables.get(variable_name, None)
 
     def parse_request(self, txt):
         kw = dict()
@@ -241,12 +246,12 @@ class Generator:
         if kwargs.get('range', False):
             if kwargs.get('range_start', False) is not False:
                 if kwargs.get('range_end', False) is not False:
-                    return randint(kwargs['range_start'], kwargs['range_end'])
+                    return randint(self.parse_int(kwargs['range_start']), self.parse_int(kwargs['range_end']))
                 else:
-                    return randint(kwargs['range_start'], maxsize)
+                    return randint(self.parse_int(kwargs['range_start']), maxsize)
             else:
                 if kwargs.get('range_end', False) is not False:
-                    return randint(int(maxsize * random()), kwargs['range_end'])
+                    return randint(int(maxsize * random()), self.parse_int(kwargs['range_end']))
                 else:
                     raise ValueError
 
@@ -265,26 +270,26 @@ class Generator:
             else:
                 valid_chars = self.valid_chars - set(kwargs['choices'])
         if kwargs['type'] == 'string':
-            output = ''.join([random.choice(valid_chars) for _ in range(kwargs['length'])])
+            output = ''.join([random.choice(valid_chars) for _ in range(self.parse_int(kwargs['length']))])
         else:
-            output = ' '.join([random.choice(valid_chars) for _ in range(kwargs['length'])])
+            output = ' '.join([random.choice(valid_chars) for _ in range(self.parse_int(kwargs['length']))])
         return output
 
     def generate_numbers(self, **kwargs):
-        repeat = kwargs.get('repeat_count', 1)
+        repeat = self.parse_int(kwargs.get('repeat_count', 1))
         arr = []
         if kwargs.get('range', False):
             if kwargs.get('range_start', False) is not False:
                 if kwargs.get('range_end', False) is not False:
                     for i in range(repeat):
-                        arr.append(randint(kwargs['range_start'], kwargs['range_end']))
+                        arr.append(randint(self.parse_int(kwargs['range_start']), self.parse_int(kwargs['range_end'])))
                 else:
                     for i in range(repeat):
-                        arr.append(randint(kwargs['range_start'], maxsize))
+                        arr.append(randint(self.parse_int(kwargs['range_start']), maxsize))
             else:
                 if kwargs.get('range_end', False) is not False:
                     for i in range(repeat):
-                        arr.append(randint(maxsize * -1, kwargs['range_end']))
+                        arr.append(randint(maxsize * -1, self.parse_int(kwargs['range_end'])))
                 else:
                     raise ValueError
         else:
@@ -293,7 +298,7 @@ class Generator:
         return arr
 
     def generate_compounds(self, **kwargs):
-        repeat_count = kwargs.get('repeat_count', 1)
+        repeat_count = self.parse_int(kwargs.get('repeat_count', 1))
         output = []
         for _ in range(repeat_count):
             gens = []
