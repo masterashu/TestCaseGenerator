@@ -69,7 +69,6 @@ class Generator:
             var_name = txt.split(':')[0]
             txt = ':'.join(txt.split(':')[1:])
             kw['var_name'] = var_name
-            # print(var_name, txt)
             
         types = {'d': 'integer', 'f': 'float',
                  'c': 'character', 's': 'string', '(': 'compound'}
@@ -223,7 +222,6 @@ class Generator:
             response = self.generate_number(**kwargs)
         elif kwargs['type'] == 'float':
             # TODO Maybe!
-            # response = self.generate_float(**kwargs)
             return None
         elif kwargs['type'] == 'string':
             response = self.generate_string(**kwargs)

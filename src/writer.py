@@ -1,6 +1,5 @@
 class Writer:
     def __init__(self):
-        # self.buffer = []
         self.output_file = None
         
     def open_file(self, file_name):
@@ -16,7 +15,6 @@ class Writer:
         elif type(data) is int:
             self.output_file.write(str(data))
         elif type(data) is list:
-            # self.output_file.write(' '.join(map(str, data)))
             seperator = False
             for i in data:
                 self.write(i)
