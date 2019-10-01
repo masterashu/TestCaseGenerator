@@ -1,6 +1,5 @@
-from random import randint, random
+from random import randint, random, choice
 from sys import maxsize
-from .parsers import split as split_request
 
 class Generator:
     def __init__(self):
@@ -53,6 +52,7 @@ class Generator:
         return self.variables.get(variable_name, None)
 
     def parse_request(self, txt):
+        from parsers import split as split_request
         kw = dict()
         if txt[0] != '%':
             # Must be a Named variable or a previous variable or a newline
