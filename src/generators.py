@@ -1,4 +1,4 @@
-from random import randint, random
+from random import randint, random, choice
 from sys import maxsize
 from .parsers import split as split_request
 
@@ -270,9 +270,9 @@ class Generator:
             else:
                 valid_chars = self.valid_chars - set(kwargs['choices'])
         if kwargs['type'] == 'string':
-            output = ''.join([random.choice(valid_chars) for _ in range(self.parse_int(kwargs['length']))])
+            output = ''.join([choice(list(valid_chars)) for _ in range(self.parse_int(kwargs['length']))])
         else:
-            output = ' '.join([random.choice(valid_chars) for _ in range(self.parse_int(kwargs['length']))])
+            output = ' '.join([choice(list(valid_chars)) for _ in range(self.parse_int(kwargs['length']))])
         return output
 
     def generate_numbers(self, **kwargs):

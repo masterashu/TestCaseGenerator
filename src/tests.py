@@ -50,7 +50,7 @@ class TestCases(unittest.TestCase):
 
     # test Generate a Random Character from a given set of characters
     def test_generate_character_from_given_set(self):
-        valid_set = (1, 2, 3, 4, 5, 'a', 'b', 'c', 'd', 'e')
+        valid_set = ('1', '2', '3', '4', '5', 'a', 'b', 'c', 'd', 'e')
         generated_character = self.generator.generate_string(type='string',
                                                              length=1,
                                                              choices=valid_set,
