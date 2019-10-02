@@ -6,7 +6,17 @@ if __name__ == "__main__":
     gen = Generator()
     wr = Writer()
     base_file_name = input("Enter File Name: ")
-    inputCount = int(input("Enter Count: "))
+    while True:
+        try:
+            inputCount = int(input("Enter Count: "))
+        except ValueError:
+            print("Please enter positive integers only")
+            continue
+        if inputCount <= 0:
+            print("Please enter positive integers only")
+            continue
+        break
+    
     for i in range(0, inputCount):
         output_file_name = f"{base_file_name}{i+1}"
         [reqs, variable] = split_req(input())
