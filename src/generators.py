@@ -251,7 +251,7 @@ class Generator:
                     return randint(self.parse_int(kwargs['range_start']), maxsize)
             else:
                 if kwargs.get('range_end', False) is not False:
-                    return randint(int(maxsize * random()), self.parse_int(kwargs['range_end']))
+                    return randint(int(maxsize * random() * -1), self.parse_int(kwargs['range_end']))
                 else:
                     raise ValueError
 
