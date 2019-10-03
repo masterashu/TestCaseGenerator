@@ -249,7 +249,7 @@ class Generator:
                     return randint(self.parse_int(kwargs['range_start']), maxsize)
             else:
                 if kwargs.get('range_end', False) is not False:
-                    return randint(int(maxsize * random()), self.parse_int(kwargs['range_end']))
+                    return randint(int(maxsize * random() * -1), self.parse_int(kwargs['range_end']))
                 else:
                     raise ValueError
 
@@ -268,9 +268,9 @@ class Generator:
             else:
                 valid_chars = self.valid_chars - set(kwargs['choices'])
         if kwargs['type'] == 'string':
-            output = ''.join([random.choice(valid_chars) for _ in range(self.parse_int(kwargs['length']))])
+            output = ''.join([choice(list(valid_chars)) for _ in range(self.parse_int(kwargs['length']))])
         else:
-            output = ' '.join([random.choice(valid_chars) for _ in range(self.parse_int(kwargs['length']))])
+            output = ' '.join([choice(list(valid_chars)) for _ in range(self.parse_int(kwargs['length']))])
         return output
 
     def generate_numbers(self, **kwargs):
