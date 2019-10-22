@@ -3,3 +3,5 @@ a.txt
 debug.txt
 
 *.txt
+
+.vscode
